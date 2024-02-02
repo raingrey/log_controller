@@ -166,7 +166,7 @@ int es_set_verbose(enum esMOD_ID_E mod_idx, enum es_log_level log_level,
 		return 0;
 	} return -1;
 }
-int es_log_init(enum esMOD_ID_E mod_idx)
+int es_log_init(void)
 {
 #ifndef __KERNEL__
 	char *enable_syslog = getenv("ES_SYSLOG");
@@ -176,13 +176,23 @@ int es_log_init(enum esMOD_ID_E mod_idx)
 		print_syslog = 0;
 	} else {
 		openlog("", LOG_CONS, 0);
-		syslog(LOG_ERR , "start\n");
 		print_syslog = 1;
 	}
 #endif
 
 	return 0;
 }
+
+void es_log_fini(void)
+{
+#ifndef __KERNEL__
+	if (print_syslog == 1) {
+		closelog();
+	}
+#endif
+
+}
+#ifdef ES_LOG_UNIT_TESTING
 #ifndef __KERNEL__
 int main(void)
 {
@@ -201,7 +211,7 @@ static int test_init(void)
 #endif
 	int a, i;
 
-	es_log_init(ES_ID_NPU);
+	es_log_init();
 for (i = 0; i < ES_ID_NUM; i++) {
 	es_set_log_level(i, ES_LOG_DBG);
 }
@@ -373,3 +383,4 @@ for (i = 0; i < ES_ID_NUM; i++) {
 	es_log_dbg("lala", "nothing %d\n", a);
 	return 0;
 }
+#endif

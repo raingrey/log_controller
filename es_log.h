@@ -1,7 +1,8 @@
 #ifndef __ES_LOG__
 #define __ES_LOG__
 
-#if 0
+#define ES_LOG_UNIT_TESTING
+#ifndef ES_LOG_UNIT_TESTING
 #include "es_common.h"
 #else
 #include "tmp_code.h"
@@ -37,6 +38,8 @@ int es_enable_dbg_modules(enum esMOD_ID_E mod_idx,
 
 int es_set_log_level(enum esMOD_ID_E mod_idx, enum es_log_level log_level);
 
+int es_log_init(void);
+void es_log_fini(void);
 
 #define es_log_err(module_name, fmt, __args...) \
 	es_print_unname_module(module_name, ES_LOG_ERR, fmt, ##__args);
